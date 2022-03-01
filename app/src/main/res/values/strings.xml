@@ -1,0 +1,60 @@
+<resources>
+    <string name="app_name">Muslim</string>
+    <string name="imsak">Imsak</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="fajr">Fajr</string>
+    <string name="dhuhr">Dhuhr</string>
+    <string name="asr">Asr</string>
+    <string name="sunset">Sunset</string>
+    <string name="maghrib">Maghrib</string>
+    <string name="isha">Isha</string>
+    <string name="midnight">Midnight</string>
+    <string name="refresh">Refresh</string>
+    <string name="updated_successfully">Updated Successfully</string>
+    <string name="not_updated">Not updated!</string>
+    <string name="hijri">Hijri</string>
+    <string name="gregorian">Gregorian</string>
+
+
+    <string name="default_data">
+            {
+            \"datetime\": [
+                {
+                    \"times\": {
+                        \"Imsak\": \"04:53 AM\",
+                        \"Sunrise\": \"06:19 AM\",
+                        \"Fajr\": \"05:03 AM\",
+                        \"Dhuhr\": \"12:07 PM\",
+                        \"Asr\": \"03:25 PM\",
+                        \"Sunset\": \"05:56 PM\",
+                        \"Maghrib\": \"06:08 PM\",
+                        \"Isha\": \"07:13 PM\",
+                        \"Midnight\": \"11:29 PM\"
+                    },
+                    \"date\": {
+                        \"timestamp\": 1646006400,
+                        \"gregorian\": \"2022-02-28\",
+                        \"hijri\": \"1443-07-27\"
+                    }
+                }
+            ],
+            \"location\": {
+                \"latitude\": 30.0792319487936,
+                \"longitude\": 31.287574555328632,
+                \"elevation\": 333.0,
+                \"country\": \"\",
+                \"country_code\": \"EG\",
+                \"timezone\": \"Africa/Cairo\",
+                \"local_offset\": 2.0
+            },
+            \"settings\": {
+                \"timeformat\": \"hh:mm tt\",
+                \"school\": \"Ithna Ashari\",
+                \"juristic\": \"Shafii\",
+                \"highlat\": \"None\",
+                \"fajr_angle\": 18.0,
+                \"isha_angle\": 18.0
+            }
+        }
+    </string>
+</resources>
