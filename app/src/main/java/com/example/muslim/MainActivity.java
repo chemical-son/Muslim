@@ -1,11 +1,17 @@
 package com.example.muslim;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -15,11 +21,19 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
     Location location;
@@ -27,11 +41,35 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     protected LocationManager locationManager;
     TextView txtLat;
     SharedPreferences savedTimes;
+    SeekBar seekBar;
+    ListView main_list_v;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        Toolbar toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+
+        main_list_v = findViewById(R.id.main_list_v);
+
+        seekBar = findViewById(R.id.main_sb);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                //Toast.makeText(MainActivity.this, String.valueOf(i), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
 
         TextView tx = findViewById(R.id.textView);
 
@@ -45,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         try {
             jsonObject = new JSONObject(oldData);
 //            Toast.makeText(MainActivity.this, jsonObject.toString(), Toast.LENGTH_SHORT).show();
-            fillRecycleView(jsonObject.getJSONArray("datetime").getJSONObject(0));
+            fillRecycleView(jsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -81,11 +119,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                         try {
                             Toast.makeText(MainActivity.this, getResources().getString(R.string.updated_successfully), Toast.LENGTH_SHORT).show();
                             //store new data in sharedPreferences
-                            savedTimes = getSharedPreferences("oldTimes", MODE_PRIVATE);
                             SharedPreferences.Editor editor = savedTimes.edit();
-                            editor.putString("oldTimes", jsonObject.getJSONObject("results").toString());
+                            editor.putString("oldTimes", jsonObject.getJSONObject("data").toString());
                             editor.commit();
-                            fillRecycleView(jsonObject.getJSONObject("results").getJSONArray("datetime").getJSONObject(0));
+                            fillRecycleView(jsonObject.getJSONObject("data"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -107,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             try {
                 jsonObject = new JSONObject(oldData);
 //            Toast.makeText(MainActivity.this, jsonObject.toString(), Toast.LENGTH_SHORT).show();
-                fillRecycleView(jsonObject.getJSONArray("datetime").getJSONObject(0));
+                fillRecycleView(jsonObject);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -123,22 +160,23 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                         public void onResponse(boolean status, JSONObject jsonObject) {
                             if (status) {
                                 try {
-                                    tx.setText(jsonObject.getJSONObject("results").toString());
+                                    tx.setText(jsonObject.getJSONObject("data").toString());
 
                                     Toast.makeText(MainActivity.this, getResources().getString(R.string.updated_successfully), Toast.LENGTH_SHORT).show();
-
+                                    sendNotification(getResources().getString(R.string.updated_successfully));
                                     //store api token in sharedPreferences
                                     SharedPreferences.Editor editor = savedTimes.edit();
-                                    editor.putString("oldTimes", jsonObject.getJSONObject("results").toString());
+                                    editor.putString("oldTimes", jsonObject.getJSONObject("data").toString());
                                     editor.commit();
 
-                                    fillRecycleView(jsonObject.getJSONObject("results").getJSONArray("datetime").getJSONObject(0));
+                                    fillRecycleView(jsonObject.getJSONObject("data"));
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
                             } else {
                                 Toast.makeText(MainActivity.this, getResources().getString(R.string.not_updated), Toast.LENGTH_SHORT).show();
+                                sendNotification(getResources().getString(R.string.not_updated));
                             }
                         }
                     });
@@ -160,51 +198,116 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     @SuppressLint("CutPasteId")
     public void fillRecycleView(JSONObject jsonObject) {
         //JSONArray jsonArray = jsonObject.names();
+
+        //call adapter to set all data
+        ArrayList<Data> data = new ArrayList<>();
+        Data temp;
+
         try {
-            TextView name, time;
-            name = findViewById(R.id.gregorian).findViewById(R.id.name);
-            time = findViewById(R.id.gregorian).findViewById(R.id.date);
-            name.setText(getResources().getString(R.string.gregorian));
-            time.setText(jsonObject.getJSONObject("date").getString("gregorian"));
+            temp = new Data(getResources().getString(R.string.fajr),
+                    parseHHMMA(jsonObject.getJSONObject("timings").getString("Fajr")));
+            data.add(temp);
 
-            name = findViewById(R.id.hijri).findViewById(R.id.name);
-            time = findViewById(R.id.hijri).findViewById(R.id.date);
-            name.setText(getResources().getString(R.string.hijri));
-            time.setText(jsonObject.getJSONObject("date").getString("hijri"));
+            temp = new Data(getResources().getString(R.string.sunrise),
+                    parseHHMMA(jsonObject.getJSONObject("timings").getString("Sunrise")));
+            data.add(temp);
 
-            name = findViewById(R.id.fajr).findViewById(R.id.name);
-            time = findViewById(R.id.fajr).findViewById(R.id.time);
-            name.setText(getResources().getString(R.string.fajr));
-            time.setText(jsonObject.getJSONObject("times").getString("Fajr"));
+            temp = new Data(getResources().getString(R.string.dhuhr),
+                    parseHHMMA(jsonObject.getJSONObject("timings").getString("Dhuhr")));
+            data.add(temp);
 
-            name = findViewById(R.id.sunrise).findViewById(R.id.name);
-            time = findViewById(R.id.sunrise).findViewById(R.id.time);
-            name.setText(getResources().getString(R.string.sunrise));
-            time.setText(jsonObject.getJSONObject("times").getString("Sunrise"));
+            temp = new Data(getResources().getString(R.string.asr),
+                    parseHHMMA(jsonObject.getJSONObject("timings").getString("Asr")));
+            data.add(temp);
 
-            name = findViewById(R.id.dhuhr).findViewById(R.id.name);
-            time = findViewById(R.id.dhuhr).findViewById(R.id.time);
-            name.setText(getResources().getString(R.string.dhuhr));
-            time.setText(jsonObject.getJSONObject("times").getString("Dhuhr"));
+            temp = new Data(getResources().getString(R.string.sunset),
+                    parseHHMMA(jsonObject.getJSONObject("timings").getString("Sunset")));
+            data.add(temp);
 
-            name = findViewById(R.id.asr).findViewById(R.id.name);
-            time = findViewById(R.id.asr).findViewById(R.id.time);
-            name.setText(getResources().getString(R.string.asr));
-            time.setText(jsonObject.getJSONObject("times").getString("Asr"));
+            temp = new Data(getResources().getString(R.string.maghrib),
+                    parseHHMMA(jsonObject.getJSONObject("timings").getString("Maghrib")));
+            data.add(temp);
 
-            name = findViewById(R.id.maghrib).findViewById(R.id.name);
-            time = findViewById(R.id.maghrib).findViewById(R.id.time);
-            name.setText(getResources().getString(R.string.maghrib));
-            time.setText(jsonObject.getJSONObject("times").getString("Maghrib"));
+            temp = new Data(getResources().getString(R.string.isha),
+                    parseHHMMA(jsonObject.getJSONObject("timings").getString("Isha")));
+            data.add(temp);
 
-            name = findViewById(R.id.isha).findViewById(R.id.name);
-            time = findViewById(R.id.isha).findViewById(R.id.time);
-            name.setText(getResources().getString(R.string.isha));
-            time.setText(jsonObject.getJSONObject("times").getString("Isha"));
+            temp = new Data(getResources().getString(R.string.imsak),
+                    parseHHMMA(jsonObject.getJSONObject("timings").getString("Imsak")));
+            data.add(temp);
+
+            temp = new Data(getResources().getString(R.string.midnight),
+                    parseHHMMA(jsonObject.getJSONObject("timings").getString("Midnight")));
+            data.add(temp);
 
         } catch (JSONException e) {
-            System.out.println(e.getMessage());
+            System.out.println("error: " + e.getMessage());
         }
+
+        //Toast.makeText(this, "data: "+ display(data), Toast.LENGTH_LONG).show();
+        Adapter adapter = new Adapter(MainActivity.this, data);
+        main_list_v.setAdapter(adapter);
+
+//        try {
+//            TextView name, time;
+//            name = findViewById(R.id.gregorian).findViewById(R.id.name);
+//            time = findViewById(R.id.gregorian).findViewById(R.id.date);
+//            name.setText(getResources().getString(R.string.gregorian));
+//            time.setText(jsonObject.getJSONObject("date").getJSONObject("gregorian").getString("date"));
+//
+//            name = findViewById(R.id.hijri).findViewById(R.id.name);
+//            time = findViewById(R.id.hijri).findViewById(R.id.date);
+//            name.setText(getResources().getString(R.string.hijri));
+//            time.setText(jsonObject.getJSONObject("date").getJSONObject("hijri").getString("date"));
+//
+//            name = findViewById(R.id.fajr).findViewById(R.id.name);
+//            time = findViewById(R.id.fajr).findViewById(R.id.time);
+//            name.setText(getResources().getString(R.string.fajr));
+//            time.setText(parseHHMMA(jsonObject.getJSONObject("timings").getString("Fajr")));
+//
+//            name = findViewById(R.id.sunrise).findViewById(R.id.name);
+//            time = findViewById(R.id.sunrise).findViewById(R.id.time);
+//            name.setText(getResources().getString(R.string.sunrise));
+//            time.setText(parseHHMMA(jsonObject.getJSONObject("timings").getString("Sunrise")));
+//
+//            name = findViewById(R.id.dhuhr).findViewById(R.id.name);
+//            time = findViewById(R.id.dhuhr).findViewById(R.id.time);
+//            name.setText(getResources().getString(R.string.dhuhr));
+//            time.setText(parseHHMMA(jsonObject.getJSONObject("timings").getString("Dhuhr")));
+//
+//            name = findViewById(R.id.asr).findViewById(R.id.name);
+//            time = findViewById(R.id.asr).findViewById(R.id.time);
+//            name.setText(getResources().getString(R.string.asr));
+//            time.setText(parseHHMMA(jsonObject.getJSONObject("timings").getString("Asr")));
+//
+//            name = findViewById(R.id.sunset).findViewById(R.id.name);
+//            time = findViewById(R.id.sunset).findViewById(R.id.time);
+//            name.setText(getResources().getString(R.string.sunset));
+//            time.setText(parseHHMMA(jsonObject.getJSONObject("timings").getString("Sunset")));
+//
+//            name = findViewById(R.id.maghrib).findViewById(R.id.name);
+//            time = findViewById(R.id.maghrib).findViewById(R.id.time);
+//            name.setText(getResources().getString(R.string.maghrib));
+//            time.setText(parseHHMMA(jsonObject.getJSONObject("timings").getString("Maghrib")));
+//
+//            name = findViewById(R.id.isha).findViewById(R.id.name);
+//            time = findViewById(R.id.isha).findViewById(R.id.time);
+//            name.setText(getResources().getString(R.string.isha));
+//            time.setText(parseHHMMA(jsonObject.getJSONObject("timings").getString("Isha")));
+//
+//            name = findViewById(R.id.imsak).findViewById(R.id.name);
+//            time = findViewById(R.id.imsak).findViewById(R.id.time);
+//            name.setText(getResources().getString(R.string.imsak));
+//            time.setText(parseHHMMA(jsonObject.getJSONObject("timings").getString("Imsak")));
+//
+//            name = findViewById(R.id.midnight).findViewById(R.id.name);
+//            time = findViewById(R.id.midnight).findViewById(R.id.time);
+//            name.setText(getResources().getString(R.string.midnight));
+//            time.setText(parseHHMMA(jsonObject.getJSONObject("timings").getString("Midnight")));
+//
+//        } catch (JSONException e) {
+//            System.out.println(e.getMessage());
+//        }
     }
 
     @Override
@@ -229,4 +332,57 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public void onStatusChanged(String provider, int status, Bundle extras) {
         Log.d("Latitude", "status");
     }
+
+    public String parseHHMMA(String time) {
+        String inputPattern = "HH:mm";
+        String outputPattern = "h:mm a";
+        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
+
+        Date date = null;
+        String str = null;
+
+        try {
+            date = inputFormat.parse(time);
+            str = outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return str;
+    }
+
+
+    void sendNotification(String message){
+        //next is to make schedule for this notifications (*ok*)
+        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(MainActivity.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder b = new NotificationCompat.Builder(MainActivity.this);
+
+        b.setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.mosque_icon)
+                .setTicker("Hearty365")
+                .setContentTitle("Refresh status")
+                .setContentText(message)
+                .setDefaults(Notification.DEFAULT_LIGHTS| Notification.DEFAULT_SOUND| Notification.DEFAULT_VIBRATE)
+                .setContentIntent(contentIntent)
+                .setContentInfo("Info");
+
+
+        NotificationManager notificationManager = (NotificationManager) (MainActivity.this).getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, b.build());
+    }
+
+
+    //for test only
+    private String display(ArrayList<Data> arrOfData){
+        String result = "";
+        for (Data data: arrOfData) {
+            result += data.getName() + ", ";
+        }
+        return result;
+    }
+
 }

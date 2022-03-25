@@ -12,7 +12,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="horizontal">
 
         <ImageView
@@ -20,12 +20,14 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:gravity="center"
+            android:layout_gravity="center"
             android:layout_margin="5dp"
-            android:src="@drawable/mosq_icon"/>
+            android:src="@drawable/mosque_icon"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:layout_gravity="center"
             android:layout_margin="5dp"
             android:textColor="@android:color/black"
             android:id="@+id/name"
@@ -36,6 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:layout_gravity="center"
             android:layout_margin="5dp"
             android:textColor="@color/black"
             android:id="@+id/time"

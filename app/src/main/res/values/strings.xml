@@ -18,43 +18,91 @@
 
     <string name="default_data">
             {
-            \"datetime\": [
-                {
-                    \"times\": {
-                        \"Imsak\": \"04:53 AM\",
-                        \"Sunrise\": \"06:19 AM\",
-                        \"Fajr\": \"05:03 AM\",
-                        \"Dhuhr\": \"12:07 PM\",
-                        \"Asr\": \"03:25 PM\",
-                        \"Sunset\": \"05:56 PM\",
-                        \"Maghrib\": \"06:08 PM\",
-                        \"Isha\": \"07:13 PM\",
-                        \"Midnight\": \"11:29 PM\"
-                    },
-                    \"date\": {
-                        \"timestamp\": 1646006400,
-                        \"gregorian\": \"2022-02-28\",
-                        \"hijri\": \"1443-07-27\"
-                    }
-                }
-            ],
-            \"location\": {
-                \"latitude\": 30.0792319487936,
-                \"longitude\": 31.287574555328632,
-                \"elevation\": 333.0,
-                \"country\": \"\",
-                \"country_code\": \"EG\",
-                \"timezone\": \"Africa/Cairo\",
-                \"local_offset\": 2.0
+        \"timings\": {
+            \"Fajr\": \"04:58\",
+            \"Sunrise\": \"06:26\",
+            \"Dhuhr\": \"12:12\",
+            \"Asr\": \"15:30\",
+            \"Sunset\": \"17:59\",
+            \"Maghrib\": \"17:59\",
+            \"Isha\": \"19:17\",
+            \"Imsak\": \"04:48\",
+            \"Midnight\": \"00:12\"
+        },
+        \"date\": {
+            \"readable\": \"02 Mar 2022\",
+            \"timestamp\": \"1646205214\",
+            \"hijri\": {
+                \"date\": \"28-07-1443\",
+                \"format\": \"DD-MM-YYYY\",
+                \"day\": \"28\",
+                \"weekday\": {
+                    \"en\": \"Al Arba\'a\",
+                    \"ar\": \"\u0627\u0644\u0627\u0631\u0628\u0639\u0627\u0621\"
+                },
+                \"month\": {
+                    \"number\": 7,
+                    \"en\": \"Rajab\",
+                    \"ar\": \"\u0631\u064e\u062c\u064e\u0628\"
+                },
+                \"year\": \"1443\",
+                \"designation\": {
+                    \"abbreviated\": \"AH\",
+                    \"expanded\": \"Anno Hegirae\"
+                },
+                \"holidays\": []
             },
-            \"settings\": {
-                \"timeformat\": \"hh:mm tt\",
-                \"school\": \"Ithna Ashari\",
-                \"juristic\": \"Shafii\",
-                \"highlat\": \"None\",
-                \"fajr_angle\": 18.0,
-                \"isha_angle\": 18.0
+            \"gregorian\": {
+                \"date\": \"02-03-2022\",
+                \"format\": \"DD-MM-YYYY\",
+                \"day\": \"02\",
+                \"weekday\": {
+                    \"en\": \"Wednesday\"
+                },
+                \"month\": {
+                    \"number\": 3,
+                    \"en\": \"March\"
+                },
+                \"year\": \"2022\",
+                \"designation\": {
+                    \"abbreviated\": \"AD\",
+                    \"expanded\": \"Anno Domini\"
+                }
+            }
+        },
+        \"meta\": {
+            \"latitude\": 31,
+            \"longitude\": 30,
+            \"timezone\": \"Africa\/Cairo\",
+            \"method\": {
+                \"id\": 5,
+                \"name\": \"Egyptian General Authority of Survey\",
+                \"params\": {
+                    \"Fajr\": 19.5,
+                    \"Isha\": 17.5
+                },
+                \"location\": {
+                    \"latitude\": 30.0444196,
+                    \"longitude\": 31.2357116
+                }
+            },
+            \"latitudeAdjustmentMethod\": \"ANGLE_BASED\",
+            \"midnightMode\": \"STANDARD\",
+            \"school\": \"STANDARD\",
+            \"offset\": {
+                \"Imsak\": 0,
+                \"Fajr\": 0,
+                \"Sunrise\": 0,
+                \"Dhuhr\": 0,
+                \"Asr\": 0,
+                \"Maghrib\": 0,
+                \"Sunset\": 0,
+                \"Isha\": 0,
+                \"Midnight\": 0
             }
         }
+    }
     </string>
+    <string name="mosque_description">TODO</string>
+    <string name="mosque_image">mosque image</string>
 </resources>

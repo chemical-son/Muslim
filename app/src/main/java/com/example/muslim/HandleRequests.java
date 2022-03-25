@@ -38,15 +38,19 @@ public class HandleRequests {
         void onResponse(boolean status, JSONObject data);
     }
 
-    public void getAzaanTimes(Double latitude,Double longitude, double elevation, int time_format, final VolleyResponseListener volleyResponseListener){
+    public void getAzaanTimes(Double latitude,Double longitude, double elevation, int method, final VolleyResponseListener volleyResponseListener){
 
         final int[] statusCode = { 0 };
         boolean status[] = { false };
         final JSONObject[] data = { null };
 
+/*
         String URL = "https://api.pray.zone/v2/times/today.json?longitude="
                 + longitude + "&latitude=" + latitude + "&elevation=" + elevation
-                + "&timeformat=" + time_format;
+                + "&timeformat=" + time_format;*/
+
+        String URL = "https://api.aladhan.com/v1/timings/now?latitude="
+                + latitude + "&longitude=" + longitude + "&method=" + method;
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, URL, null,
                 new Response.Listener<JSONObject>() {
