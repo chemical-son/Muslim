@@ -1,8 +1,8 @@
-package com.example.muslim;
+package com.example.muslim.adapter;
 
-public class Data {
+public class TimesData {
     private String name, time;
-    public Data(String name, String time){
+    public TimesData(String name, String time){
         this.name = name;
         this.time = time;
     }

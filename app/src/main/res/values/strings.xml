@@ -103,6 +103,5 @@
         }
     }
     </string>
-    <string name="mosque_description">TODO</string>
-    <string name="mosque_image">mosque image</string>
+    <string name="quran">Quran</string>
 </resources>

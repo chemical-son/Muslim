@@ -1,22 +1,21 @@
-package com.example.muslim;
+package com.example.muslim.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.muslim.R;
 
 import java.util.ArrayList;
 
-public class Adapter extends ArrayAdapter {
+public class TimesAdapter extends ArrayAdapter {
     Context context;
-    ArrayList<Data> data;
+    ArrayList<TimesData> data;
 
-    public Adapter(Context context, ArrayList<Data> data){
+    public TimesAdapter(Context context, ArrayList<TimesData> data){
         super(context, R.layout.date_structure);
         this.context = context;
         this.data = data;

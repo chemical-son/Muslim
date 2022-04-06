@@ -1,7 +1,6 @@
-package com.example.muslim;
+package com.example.muslim.activites;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
@@ -26,58 +25,38 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.muslim.R;
+import com.example.muslim.adapter.TimesData;
+import com.example.muslim.adapter.TimesAdapter;
+import com.example.muslim.request_handelers.HandleRequests;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity implements LocationListener {
+public class TimesActivity extends AppCompatActivity implements LocationListener {
     Location location;
 
     protected LocationManager locationManager;
-    TextView txtLat;
     SharedPreferences savedTimes;
-    SeekBar seekBar;
     ListView main_list_v;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        setContentView(R.layout.activity_times);
 
         main_list_v = findViewById(R.id.main_list_v);
 
-        seekBar = findViewById(R.id.main_sb);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                //Toast.makeText(MainActivity.this, String.valueOf(i), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-
-
-        TextView tx = findViewById(R.id.textView);
 
         savedTimes = getSharedPreferences("savedTimes", MODE_PRIVATE);
 
         String defaultData = getResources().getString(R.string.default_data);
         String oldData = savedTimes.getString("oldTimes", defaultData);
-        tx.setText(oldData);
 
         JSONObject jsonObject;
         try {
@@ -87,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
 
         try {
             //get current location
@@ -111,13 +89,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             }
 
             //update old data if phone is connected to the internet
-            HandleRequests handleRequests = new HandleRequests(MainActivity.this);
+            HandleRequests handleRequests = new HandleRequests(TimesActivity.this);
             handleRequests.getAzaanTimes(location.getLatitude(), location.getLongitude(), 333.0, 1, new HandleRequests.VolleyResponseListener() {
                 @Override
                 public void onResponse(boolean status, JSONObject jsonObject) {
                     if (status) {
                         try {
-                            Toast.makeText(MainActivity.this, getResources().getString(R.string.updated_successfully), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(TimesActivity.this, getResources().getString(R.string.updated_successfully), Toast.LENGTH_SHORT).show();
                             //store new data in sharedPreferences
                             SharedPreferences.Editor editor = savedTimes.edit();
                             editor.putString("oldTimes", jsonObject.getJSONObject("data").toString());
@@ -127,19 +105,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                             e.printStackTrace();
                         }
                     } else {
-                        Toast.makeText(MainActivity.this, getResources().getString(R.string.not_updated), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TimesActivity.this, getResources().getString(R.string.not_updated), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
-
-            txtLat = findViewById(R.id.textview1);
-            txtLat.setText("Latitude:" + location.getLatitude() + ", Longitude:" + location.getLongitude());
 
             savedTimes = getSharedPreferences("savedTimes", MODE_PRIVATE);
 
             defaultData = getResources().getString(R.string.default_data);
             oldData = savedTimes.getString("oldTimes", defaultData);
-            tx.setText(oldData);
 
             try {
                 jsonObject = new JSONObject(oldData);
@@ -154,15 +128,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             bt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    HandleRequests handleRequests = new HandleRequests(MainActivity.this);
+                    HandleRequests handleRequests = new HandleRequests(TimesActivity.this);
                     handleRequests.getAzaanTimes(location.getLatitude(), location.getLongitude(), 333.0, 1, new HandleRequests.VolleyResponseListener() {
                         @Override
                         public void onResponse(boolean status, JSONObject jsonObject) {
                             if (status) {
                                 try {
-                                    tx.setText(jsonObject.getJSONObject("data").toString());
 
-                                    Toast.makeText(MainActivity.this, getResources().getString(R.string.updated_successfully), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(TimesActivity.this, getResources().getString(R.string.updated_successfully), Toast.LENGTH_SHORT).show();
                                     sendNotification(getResources().getString(R.string.updated_successfully));
                                     //store api token in sharedPreferences
                                     SharedPreferences.Editor editor = savedTimes.edit();
@@ -175,17 +148,27 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                                     e.printStackTrace();
                                 }
                             } else {
-                                Toast.makeText(MainActivity.this, getResources().getString(R.string.not_updated), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(TimesActivity.this, getResources().getString(R.string.not_updated), Toast.LENGTH_SHORT).show();
                                 sendNotification(getResources().getString(R.string.not_updated));
                             }
                         }
                     });
                 }
             });
+
         }
         catch (Exception e){
             System.out.println(e.getMessage());
         }
+
+        Button btGoToQuranPage = findViewById(R.id.goToFehresPage);
+        btGoToQuranPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TimesActivity.this, FehrisActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -200,43 +183,43 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         //JSONArray jsonArray = jsonObject.names();
 
         //call adapter to set all data
-        ArrayList<Data> data = new ArrayList<>();
-        Data temp;
+        ArrayList<TimesData> data = new ArrayList<>();
+        TimesData temp;
 
         try {
-            temp = new Data(getResources().getString(R.string.fajr),
+            temp = new TimesData(getResources().getString(R.string.fajr),
                     parseHHMMA(jsonObject.getJSONObject("timings").getString("Fajr")));
             data.add(temp);
 
-            temp = new Data(getResources().getString(R.string.sunrise),
+            temp = new TimesData(getResources().getString(R.string.sunrise),
                     parseHHMMA(jsonObject.getJSONObject("timings").getString("Sunrise")));
             data.add(temp);
 
-            temp = new Data(getResources().getString(R.string.dhuhr),
+            temp = new TimesData(getResources().getString(R.string.dhuhr),
                     parseHHMMA(jsonObject.getJSONObject("timings").getString("Dhuhr")));
             data.add(temp);
 
-            temp = new Data(getResources().getString(R.string.asr),
+            temp = new TimesData(getResources().getString(R.string.asr),
                     parseHHMMA(jsonObject.getJSONObject("timings").getString("Asr")));
             data.add(temp);
 
-            temp = new Data(getResources().getString(R.string.sunset),
+            temp = new TimesData(getResources().getString(R.string.sunset),
                     parseHHMMA(jsonObject.getJSONObject("timings").getString("Sunset")));
             data.add(temp);
 
-            temp = new Data(getResources().getString(R.string.maghrib),
+            temp = new TimesData(getResources().getString(R.string.maghrib),
                     parseHHMMA(jsonObject.getJSONObject("timings").getString("Maghrib")));
             data.add(temp);
 
-            temp = new Data(getResources().getString(R.string.isha),
+            temp = new TimesData(getResources().getString(R.string.isha),
                     parseHHMMA(jsonObject.getJSONObject("timings").getString("Isha")));
             data.add(temp);
 
-            temp = new Data(getResources().getString(R.string.imsak),
+            temp = new TimesData(getResources().getString(R.string.imsak),
                     parseHHMMA(jsonObject.getJSONObject("timings").getString("Imsak")));
             data.add(temp);
 
-            temp = new Data(getResources().getString(R.string.midnight),
+            temp = new TimesData(getResources().getString(R.string.midnight),
                     parseHHMMA(jsonObject.getJSONObject("timings").getString("Midnight")));
             data.add(temp);
 
@@ -245,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         }
 
         //Toast.makeText(this, "data: "+ display(data), Toast.LENGTH_LONG).show();
-        Adapter adapter = new Adapter(MainActivity.this, data);
+        TimesAdapter adapter = new TimesAdapter(TimesActivity.this, data);
         main_list_v.setAdapter(adapter);
 
 //        try {
@@ -354,10 +337,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     void sendNotification(String message){
         //next is to make schedule for this notifications (*ok*)
-        Intent intent = new Intent(MainActivity.this, MainActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(MainActivity.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intent = new Intent(TimesActivity.this, TimesActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(TimesActivity.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder b = new NotificationCompat.Builder(MainActivity.this);
+        NotificationCompat.Builder b = new NotificationCompat.Builder(TimesActivity.this);
 
         b.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
@@ -371,15 +354,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 .setContentInfo("Info");
 
 
-        NotificationManager notificationManager = (NotificationManager) (MainActivity.this).getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) (TimesActivity.this).getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, b.build());
     }
 
 
     //for test only
-    private String display(ArrayList<Data> arrOfData){
+    private String display(ArrayList<TimesData> arrOfData){
         String result = "";
-        for (Data data: arrOfData) {
+        for (TimesData data: arrOfData) {
             result += data.getName() + ", ";
         }
         return result;
