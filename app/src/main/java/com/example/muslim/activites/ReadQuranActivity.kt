@@ -23,6 +23,7 @@ class ReadQuranActivity : AppCompatActivity() {
         var inputStreamAsString: String
         var fileAsJSONObject: JSONObject
 
+
         //اضافة بسم الله لباقي السور
         if(data.id != 1){
             if (data.id != 9){
