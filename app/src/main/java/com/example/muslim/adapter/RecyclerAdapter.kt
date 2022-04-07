@@ -19,7 +19,7 @@ class RecyclerAdapter(private var items: ArrayList<DataModel>): RecyclerView.Ada
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var view = LayoutInflater.from(parent.context).inflate(R.layout.main_recycle_view_items, parent, false)
+        var view = LayoutInflater.from(parent.context).inflate(R.layout.fehris_recycle_view_item, parent, false)
         return ViewHolder(view)
     }
 

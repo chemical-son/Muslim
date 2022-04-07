@@ -20,23 +20,24 @@ class ReadQuranActivity : AppCompatActivity() {
         textView.text = ""
 
 
-        var inputStreamAsString = application.assets.open("quran.json").bufferedReader().use{ it.readText() }
-        var fileAsJSONArray = JSONArray(inputStreamAsString)
-
+        var inputStreamAsString: String
+        var fileAsJSONObject: JSONObject
 
         //اضافة بسم الله لباقي السور
-        var temp: JSONObject = fileAsJSONArray.getJSONObject(0)
         if(data.id != 1){
             if (data.id != 9){
-                var strBesmEllah = temp.getString("aya_text")
+                inputStreamAsString = application.assets.open("all_quran/0.json").bufferedReader().use{ it.readText() }
+                fileAsJSONObject = JSONObject(inputStreamAsString)
+
+                val strBesmEllah = fileAsJSONObject.getString("content")
                 textView.append("${strBesmEllah.subSequence(0, strBesmEllah.length-1)}\n")
             }
         }
+//src/main/Assets/all_quran
+        inputStreamAsString = application.assets.open("all_quran/${data.id}.json").bufferedReader().use{ it.readText() }
+        fileAsJSONObject = JSONObject(inputStreamAsString)
 
-        inputStreamAsString = application.assets.open("quran_as_souar.json").bufferedReader().use{ it.readText() }
-        fileAsJSONArray = JSONArray(inputStreamAsString)
-
-        textView.append(fileAsJSONArray.getJSONObject(data.id-1).getString("content"))
+        textView.append(fileAsJSONObject.getString("content"))
 
 
     }
