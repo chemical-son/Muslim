@@ -2,6 +2,7 @@ package com.example.muslim.activites
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.muslim.R
@@ -18,7 +19,7 @@ class FehrisActivity : AppCompatActivity() {
         setContentView(R.layout.activity_fehris)
 
         recyclerView = findViewById(R.id.recycler_view)
-        var list = ArrayList<DataModel>()
+        val list = ArrayList<DataModel>()
 
         val inputStreamAsString = application.assets.open("fehris.json").bufferedReader().use{ it.readText() }
         val fileAsJSONArray = JSONArray(inputStreamAsString)

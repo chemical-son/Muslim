@@ -1,45 +1,75 @@
 package com.example.muslim.activites
 
-import androidx.appcompat.app.AppCompatActivity
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.muslim.R
 import com.example.muslim.adapter.DataModel
-import org.json.JSONArray
+import com.example.muslim.adapter.display_quran.DataModelForDisplayQuran
+import com.example.muslim.adapter.display_quran.RecyclerAdapterForDisplayQuran
 import org.json.JSONObject
+import java.io.BufferedReader
 
 class ReadQuranActivity : AppCompatActivity() {
 
-    lateinit var textView: TextView
+    private lateinit var soura_name: TextView
+    private lateinit var soura_content: TextView
+    private var id: Int = 0
+    private var name: String? = null
+
+    lateinit var recyclerView: RecyclerView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_read_quran)
 
-        textView = findViewById(R.id.read_data)
-        val data = intent.getSerializableExtra("data") as DataModel
-        textView.text = ""
+        recyclerView = findViewById(R.id.read_recycler_view)
 
 
-        var inputStreamAsString: String
-        var fileAsJSONObject: JSONObject
+        soura_name = findViewById(R.id.sura_name)
+        soura_content = findViewById(R.id.soura_content)
 
+        id = intent.getIntExtra("id", 0)
+        name = intent.getStringExtra("name")
+
+        soura_name.text = "$name"
+        soura_content.text = ""
+
+        var reader: BufferedReader
+        var str = ""
 
         //اضافة بسم الله لباقي السور
-        if(data.id != 1){
-            if (data.id != 9){
-                inputStreamAsString = application.assets.open("all_quran/0.json").bufferedReader().use{ it.readText() }
-                fileAsJSONObject = JSONObject(inputStreamAsString)
-
-                val strBesmEllah = fileAsJSONObject.getString("content")
-                textView.append("${strBesmEllah.subSequence(0, strBesmEllah.length-1)}\n")
+        if (id != 1) {
+            if (id != 9) {
+                reader = application.assets.open("all_quran/0.txt").bufferedReader()
+                str = reader.readLine()
+                reader.close()
             }
         }
-//src/main/Assets/all_quran
-        inputStreamAsString = application.assets.open("all_quran/${data.id}.json").bufferedReader().use{ it.readText() }
-        fileAsJSONObject = JSONObject(inputStreamAsString)
 
-        textView.append(fileAsJSONObject.getString("content"))
+        val arrayList = ArrayList<DataModelForDisplayQuran>()
+        arrayList.add(DataModelForDisplayQuran(str)) // to add besm ellah
 
+        //fill array list to pass it to recycler view
+        var count = 0
+        str = ""
+        reader = application.assets.open("all_quran/$id.txt").bufferedReader()
+        reader.forEachLine {
+            str += it
+            count++
+            if (count == 20){
+                count = 0
+                arrayList.add(DataModelForDisplayQuran(str))
+                str = ""
+            }
+        }
+        arrayList.add(DataModelForDisplayQuran(str))
 
+        recyclerView.layoutManager = LinearLayoutManager(applicationContext)
+        recyclerView.adapter = RecyclerAdapterForDisplayQuran(arrayList)
     }
 }

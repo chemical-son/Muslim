@@ -27,7 +27,8 @@ class RecyclerAdapter(private var items: ArrayList<DataModel>): RecyclerView.Ada
         holder.bind(items[position])
         holder.itemView.setOnClickListener{
             var intent = Intent(it.context, ReadQuranActivity::class.java)
-            intent.putExtra("data", items[position])
+            intent.putExtra("id", items[position].id)
+            intent.putExtra("name", items[position].name)
             it.context.startActivity(intent)
 
         }
