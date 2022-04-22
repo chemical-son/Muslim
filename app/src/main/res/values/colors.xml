@@ -7,11 +7,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="semi_white">#b0FDFDFD</color>
+    <color name="semi_white">#BFFFFFFF</color>
 
-    <color name="semi_yellow">#BFFF9800</color>
+    <color name="semi_yellow">#CD7A00</color>
     <color name="yellow">#FF9800</color>
 
     <color name="page">#FFF8BD</color>
-    <color name="semi_page">#CCFFF8BD</color>
+    <color name="semi_page">#FFF5A3</color>
 </resources>

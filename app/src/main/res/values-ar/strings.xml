@@ -103,4 +103,6 @@
     }
     </string>
     <string name="quran">قرآن</string>
+    <string name="home">الرئيسية</string>
+    <string name="weak_network_connection">اتصالك بالإنترنت غير مستقر</string>
 </resources>

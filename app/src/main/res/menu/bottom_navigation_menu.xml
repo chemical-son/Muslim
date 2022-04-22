@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/home_bottom_nav"
+        android:title="@string/home"
+        android:icon="@drawable/ic_home"/>
+
+    <item android:id="@+id/quran_bottom_nav"
+        android:title="@string/quran"
+        android:icon="@drawable/ic_reed_quran"/>
+
+    <item android:id="@+id/listen_quran_bottom_nav"
+        android:title="@string/listen"
+        android:icon="@drawable/ic_listen_quran"/>
+</menu>
