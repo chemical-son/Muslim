@@ -105,8 +105,9 @@
     </string>
     <string name="quran">Quran</string>
     <string name="home">Home</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="listen">Listen</string>
     <string name="weak_network_connection">weak network connection</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="sura_no">Sura Number</string>
 </resources>

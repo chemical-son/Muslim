@@ -105,4 +105,8 @@
     <string name="quran">قرآن</string>
     <string name="home">الرئيسية</string>
     <string name="weak_network_connection">اتصالك بالإنترنت غير مستقر</string>
+    <string name="listen">إستماع</string>
+    <string name="play">تشغيل</string>
+    <string name="pause">ايقاف</string>
+    <string name="sura_no">سورة رقم</string>
 </resources>
